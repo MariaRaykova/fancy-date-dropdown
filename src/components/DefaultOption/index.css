@@ -1,0 +1,8 @@
+.option-container {
+    width:100%;
+    display:flex;
+    justify-content: space-between;
+}
+.option-container  {
+    padding: 0 20px;
+}
