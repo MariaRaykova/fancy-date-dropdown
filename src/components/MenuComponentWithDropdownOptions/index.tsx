@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, FC } from "react";
-import Select, { components, MenuProps } from "react-select";
+import Select, { components } from "react-select";
 // @ts-ignore
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -7,9 +7,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCaretDown, faCaretUp, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import "./index.css"
+
 // @ts-ignore
-const CustomComponent = (props) => {
-    const [customStartDate, setCustomStartDate] = useState<Date | null >(null);
+const MenuComponentWithDropdownOptions = (props) => {
+    const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
     const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
     const [showStart, setShowStart] = useState<boolean>(false);
     const [showEnd, setShowEnd] = useState<boolean>(false);
@@ -107,5 +108,5 @@ const CustomComponent = (props) => {
         </>
     );
 };
-// @ts-ignore
-export default CustomComponent;
+
+export default MenuComponentWithDropdownOptions;

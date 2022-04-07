@@ -1,9 +1,8 @@
-import React, { FC, useState } from "react";
-import Select, { StylesConfig} from "react-select";
-import Option from "../DefaultOption"
-import CustomComponent from "../CustomComponent";
+import React, { useState } from "react";
+import Select, { StylesConfig, Props } from "react-select";
+import DefaultOptionsComponent from "../DefaultOptionsComponent"
+import MenuComponentWithDropdownOptions from "../MenuComponentWithDropdownOptions"
 import "./index.css";
-
 
 export interface DefaultOptionType {
   readonly value: string;
@@ -37,13 +36,14 @@ const customStyles: StylesConfig<DefaultOptionType, IsMulti> = {
         backgroundColor: state.isFocused ? "#EBEDF5" : "white",
         color: state.isSelected ? "#375D6F" : "#375D6F",
       },
-      minHeeight:"40px",
+      minHeeight: "40px",
       lineHeight: "40px",
-      padding:0,
-      margin:0,
+      padding: 0,
+      margin: 0,
     }
   ),
-   // @ts-ignore
+  // control: (base, state: ControlProps<DefaultOptionType, boolean>) => ({
+  // @ts-ignore
   control: (base, state) => ({
     ...base,
     background: "white",
@@ -67,7 +67,7 @@ const customStyles: StylesConfig<DefaultOptionType, IsMulti> = {
     width: "285px",
     borderRadius: 0,
     padding: 0,
-    hyphens: "auto", 
+    hyphens: "auto",
     marginTop: 0,
     textAlign: "left"
   }),
@@ -99,12 +99,8 @@ const customStyles: StylesConfig<DefaultOptionType, IsMulti> = {
   })
 };
 
-const Dropdown: FC = () => {
-    // @ts-ignore
+const Dropdown = (props: Props<DefaultOptionType, IsMulti>) => {
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
-
-   // @ts-ignore
-
   const showCalendar = () => {
     showDropdown ? setShowDropdown(false) : setShowDropdown(true)
   }
@@ -115,9 +111,13 @@ const Dropdown: FC = () => {
         Dropdown Menu
       </label>
       <Select
+        {...props}
         isClearable
-        components={{ Menu: CustomComponent, Option }}
-          // @ts-ignore
+        components={{
+          Menu: MenuComponentWithDropdownOptions,
+          Option: DefaultOptionsComponent
+        }}
+        // @ts-ignore
         showDropdown={showDropdown}
         options={defaultOptions}
         styles={customStyles}
