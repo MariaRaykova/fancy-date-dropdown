@@ -1,6 +1,5 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import './App.css';
-
 import Dropdown from './components/Dropdown'
 
 const App: FC = () => {
@@ -10,5 +9,4 @@ const App: FC = () => {
     </div>
   );
 }
-
 export default App;

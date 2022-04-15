@@ -1,18 +1,14 @@
 .container {
     display: flex;
     flex-direction: column;
-    justify-content:  flex-start;
-    align-items:center;
-    background: #E5E5E5;
-    height:100vh;
-    padding:0;
-    margin:0;
-    width:100%;
+    justify-content: flex-start;
+    align-items: center;
+    background: #e5e5e5;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    width: 100%;
 }
 .icon {
-    color:#9FA3B9;
+    color: #9fa3b9;
 }
-/* .option-container {
-    display:flex;
-    justify-content: space-between;
-} */
