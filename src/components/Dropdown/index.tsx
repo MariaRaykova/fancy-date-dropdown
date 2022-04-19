@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import Select, { StylesConfig, Props, components, MenuProps, ControlProps, CSSObjectWithLabel, ActionMeta } from "react-select";
-import DefaultOptionsComponent from "../DefaultOptionsComponent"
-import MenuComponentWithDropdownOptions from "../MenuComponentWithDropdownOptions"
+import Select, { StylesConfig, Props, components } from "react-select";
 import { DefaultOptionType, defaultOptions } from "../types"
-import "./index.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import moment from 'moment';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faCaretDown, faCaretUp, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import "./index.css"
+
+library.add(faCaretDown);
+library.add(faCaretUp);
+library.add(faTrashCan);
 
 const customStyles: StylesConfig<DefaultOptionType> = {
   container: (base, state) => ({
@@ -29,7 +37,6 @@ const customStyles: StylesConfig<DefaultOptionType> = {
       margin: 0,
     }
   ),
-  // @ts-ignore
   control: (base, state) => ({
     ...base,
     background: "white",
@@ -37,9 +44,8 @@ const customStyles: StylesConfig<DefaultOptionType> = {
     borderTop: 0,
     borderLeft: 0,
     borderRight: 0,
-    // @ts-ignore
-    borderColor: state.isFocused || state.isSelected ? "#CCE5E8" : "#CCE5E8",
-    boxShadow: state.isFocused ? 0 : 0,
+    borderColor: state.isFocused ? "#CCE5E8" : "#CCE5E8",
+    boxShadow: 'none',
     whiteSpace: "nowrap",
     width: "100%",
     color: "",
@@ -89,15 +95,20 @@ const Dropdown = (props: Props<DefaultOptionType>) => {
   const [isOpenDropdown, setIsOpenDropdown] = useState<boolean>(false)
   const [startValue, setStartValue] = useState<Date | null>(null)
   const [endValue, setEndValue] = useState<Date | null>(null)
-  
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [showStart, setShowStart] = useState<boolean>(false);
+  const [showEnd, setShowEnd] = useState<boolean>(false);
+
   const onShowDropdownClick = () => {
     setIsOpenDropdown(!isOpenDropdown)
   }
   const handleChangeStart = (data: Date) => {
     setStartValue(data)
+    setShowStart(false)
   }
   const handleChangeEnd = (data: Date) => {
     setEndValue(data)
+    setShowEnd(false)
   }
   const clearStartValue = () => {
     setStartValue(null);
@@ -105,6 +116,7 @@ const Dropdown = (props: Props<DefaultOptionType>) => {
   const clearEndValue = () => {
     setEndValue(null);
   }
+
   return (
     <div className="container">
       <label className="label" id="aria-label" htmlFor="aria-example-input">
@@ -112,18 +124,112 @@ const Dropdown = (props: Props<DefaultOptionType>) => {
       </label>
       <Select
         {...props}
-        // @ts-ignore
-        isOpenDropdown={isOpenDropdown}
-        onShowDropdownClick={onShowDropdownClick}
-        handleStart={handleChangeStart}
-        clearStartValue={clearStartValue}
-        startValue={startValue}
-        handleEnd={handleChangeEnd}
-        clearEndValue={clearEndValue}
-        endValue={endValue}
         components={{
-          Menu: MenuComponentWithDropdownOptions,
-          Option: DefaultOptionsComponent
+          Menu: (props) => (
+            <components.Menu {...props}>
+              <div className="datepicker-wrapper">
+                <div>{props.children}</div>
+
+                {isOpenDropdown && (
+                  <div className="custom-range-boxes">
+                    <div className="calendar-wrapper" onClick={() => setShowStart(!showStart)}>
+                      <div className="labels-wrapper">
+                        <label className="text" >
+                          {startValue ? moment(startValue).format("MMM DD, YYYY") : "Start Date"}
+                        </label>
+                        <label>
+                          <span className="icon-label">
+                              <FontAwesomeIcon
+                                icon={showStart ? "caret-up" : "caret-down"}
+                                className={showStart ? "icon-open" : "icon-close"}
+                              />
+                          </span>
+                          {showStart || endValue && (
+                            <span
+                              className="trash"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                clearStartValue()
+                              }}
+                            >
+                              <FontAwesomeIcon icon="trash-can" />
+                            </span>
+                          )}
+                        </label>
+                      </div>
+                      {showStart && (
+                        <DatePicker
+                          selected={startValue}
+                          onChange={handleChangeStart}
+                          inline
+                        />
+                      )}
+                    </div>
+                    <div className="calendar-wrapper" onClick={() => setShowEnd(!showEnd)}>
+                      <div className="labels-wrapper">
+                        <label className="text">
+                          {endValue ? moment(endValue).format("MMM DD, YYYY") : "End Date"}
+                        </label>
+                        <label className="end">
+                          <span className="icon-label">
+                            <FontAwesomeIcon
+                              icon={showEnd ? "caret-up" : "caret-down"}
+                              className={showEnd ? "icon-open" : "icon-close"}
+                            />
+                          </span >
+                          {showEnd || endValue && (
+                            <span
+                              className="trash"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                clearEndValue()
+                              }}
+                            >
+                              <FontAwesomeIcon icon="trash-can" />
+                            </span>
+                          )}
+                        </label>
+                      </div>
+                      {showEnd && (
+                        <DatePicker
+                          selected={endValue}
+                          onChange={handleChangeEnd}
+                          inline
+                        />
+                      )}
+                    </div>
+                    <div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </components.Menu>
+          ),
+          Option: (props) => (
+            <components.Option {...props}  >
+              <label
+                className="option-container"
+                onClick={(event) => {
+                  if (props.data.value === "dateRange") {
+                    event.stopPropagation();
+                    onShowDropdownClick()
+                    setIsOpen(!isOpen)
+                  }
+                  props.selectOption(props.data)
+                }}
+              >
+                {props.children}
+                {props.data.value === "dateRange" && props.isFocused && (
+                  <span className="icon" >
+                    <FontAwesomeIcon
+                      icon={isOpen ? "caret-down" : "caret-up"}
+                      className="checkbox-select-group-caret"
+                    />
+                  </span>
+                )}
+              </label>
+            </components.Option>
+          )
         }}
         options={defaultOptions}
         styles={customStyles}
